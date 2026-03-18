@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mindtrack
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn mindtrack.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DJANGO_SETTINGS_MODULE
+        value: mindtrack.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
