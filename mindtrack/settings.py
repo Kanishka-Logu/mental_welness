@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-mgete)u4e5d_c0-two0)17ix0250(g1$cip(f%z!-qi&26p!qp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] # In production, you should set this to your Render URL.
 
 
 # Application definition
@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'mood.apps.MoodConfig',
     'journal.apps.JournalConfig',
     'dashboard.apps.DashboardConfig',
+    'reminders.apps.RemindersConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -120,6 +122,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'

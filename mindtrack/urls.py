@@ -9,4 +9,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('mood/', include('mood.urls')),
     path('journal/', include('journal.urls')),
+    path('reminders/', include('reminders.urls')),
 ]
