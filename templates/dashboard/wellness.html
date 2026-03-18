@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row align-items-center mb-5 py-4">
+    <div class="col-md-8">
+        <h1 class="text-primary fw-bold"><i class="fas fa-leaf text-success me-2"></i>Wellness Hub</h1>
+        <p class="text-muted">Take a moment for yourself. Explore these resources designed to help you relax and recharge.</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Breathing Exercise -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 wellness-card">
+            <div class="card-body p-5 text-center d-flex flex-column justify-content-center">
+                <h4 class="fw-bold mb-4">4-7-8 Breathing Technique</h4>
+                <div class="breathe-container my-4 mx-auto rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 200px; height: 200px; background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);">
+                    <h5 id="breatheText" class="text-white fw-bold m-0">Ready</h5>
+                </div>
+                <div class="mt-4">
+                     <button id="breatheBtn" class="btn btn-outline-success rounded-pill px-4 shadow-sm">Start Exercise</button>
+                     <p class="text-muted small mt-3 px-4">Breathe in for 4s, hold for 7s, exhale for 8s.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Tips -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-light">
+            <div class="card-body p-4">
+                 <h4 class="fw-bold mb-4 pb-2 border-bottom"><i class="fas fa-lightbulb text-warning me-2"></i>Stress Management Tips</h4>
+                 
+                 <div class="d-flex align-items-start mb-4">
+                     <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                         <i class="fas fa-glass-water text-primary fs-4"></i>
+                     </div>
+                     <div>
+                         <h6 class="fw-bold mb-1">Stay Hydrated</h6>
+                         <p class="text-muted small mb-0">Dehydration can increase cortisol levels, the stress hormone. Keep a water bottle handy.</p>
+                     </div>
+                 </div>
+
+                 <div class="d-flex align-items-start mb-4">
+                     <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                         <i class="fas fa-walking text-success fs-4"></i>
+                     </div>
+                     <div>
+                         <h6 class="fw-bold mb-1">Step Away</h6>
+                         <p class="text-muted small mb-0">Taking a 5-minute break away from your screen or workspace can reset your focus.</p>
+                     </div>
+                 </div>
+
+                 <div class="d-flex align-items-start">
+                     <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                         <i class="fas fa-bed text-info fs-4"></i>
+                     </div>
+                     <div>
+                         <h6 class="fw-bold mb-1">Prioritize Sleep</h6>
+                         <p class="text-muted small mb-0">Aim for 7-9 hours of quality sleep to improve emotional resilience.</p>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resources -->
+<div class="row mt-4">
+    <div class="col-12">
+        <h4 class="fw-bold mb-4 pb-2 border-bottom"><i class="fas fa-hands-helping text-primary me-2"></i>Professional Resources</h4>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 hover-elevate">
+            <div class="card-body p-4 text-center">
+                <i class="fas fa-phone-alt fs-1 text-danger mb-3"></i>
+                <h5 class="fw-bold">Crisis Hotline</h5>
+                <p class="text-muted small">Available 24/7 if you need immediate support.</p>
+                <a href="tel:988" class="btn btn-sm btn-outline-danger mt-2 stretched-link">Call 988</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 hover-elevate">
+            <div class="card-body p-4 text-center">
+                <i class="fas fa-comments fs-1 text-info mb-3"></i>
+                <h5 class="fw-bold">Text Line</h5>
+                <p class="text-muted small">Connect with a crisis counselor via text message.</p>
+                <button class="btn btn-sm btn-outline-info mt-2 stretched-link">Text HOME to 741741</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 hover-elevate">
+             <div class="card-body p-4 text-center">
+                <i class="fas fa-search fs-1 text-secondary mb-3"></i>
+                <h5 class="fw-bold">Find a Therapist</h5>
+                 <p class="text-muted small">Search for professionals in your local area.</p>
+                 <a href="#" class="btn btn-sm btn-outline-secondary mt-2 stretched-link" onclick="alert('This would link to a directory service like Psychology Today in a production app.'); return false;">Search Directory</a>
+             </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    // Simple 4-7-8 Breathing Animation logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('breatheBtn');
+        const text = document.getElementById('breatheText');
+        const container = document.querySelector('.breathe-container');
+        let interval;
+        let isRunning = false;
+
+        btn.addEventListener('click', () => {
+            if (isRunning) {
+                clearInterval(interval);
+                btn.textContent = 'Start Exercise';
+                btn.classList.replace('btn-danger', 'btn-outline-success');
+                text.textContent = 'Ready';
+                container.style.transform = 'scale(1)';
+                container.style.transition = 'transform 0.5s ease';
+                isRunning = false;
+                return;
+            }
+
+            isRunning = true;
+            btn.textContent = 'Stop Exercise';
+            btn.classList.replace('btn-outline-success', 'btn-danger');
+
+            const cycle = () => {
+                // Inhale (4s)
+                text.textContent = 'Inhale';
+                container.style.transition = 'transform 4s linear';
+                container.style.transform = 'scale(1.5)';
+                
+                setTimeout(() => {
+                    // Hold (7s)
+                    text.textContent = 'Hold';
+                    
+                    setTimeout(() => {
+                        // Exhale (8s)
+                        text.textContent = 'Exhale';
+                        container.style.transition = 'transform 8s linear';
+                        container.style.transform = 'scale(1)';
+                    }, 7000);
+                }, 4000);
+            };
+
+            cycle();
+            interval = setInterval(cycle, 19000); // Total cycle 19s
+        });
+    });
+</script>
+{% endblock %}

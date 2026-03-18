@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row align-items-center mb-5 py-4">
+    <div class="col-md-8">
+        <h1 class="text-primary fw-bold"><i class="fas fa-history text-secondary me-2"></i>My Mood History</h1>
+        <p class="text-muted">A clear view of your emotional journey.</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        <a href="{% url 'export_mood_pdf' %}" class="btn btn-outline-danger rounded-pill px-4 shadow-sm">
+            <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for mood in moods %}
+    <div class="col-md-6 col-lg-4">
+         <div class="card h-100 border-0 shadow-sm rounded-4 hover-elevate">
+             <div class="card-body p-4 position-relative">
+                 <div class="d-flex align-items-center mb-3 pb-3 border-bottom border-light">
+                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-size: 24px;">
+                        {% if mood.mood == 'Happy' %}😊
+                        {% elif mood.mood == 'Sad' %}😢
+                        {% elif mood.mood == 'Angry' %}😡
+                        {% elif mood.mood == 'Stressed' %}😰
+                        {% elif mood.mood == 'Calm' %}😌
+                        {% endif %}
+                     </div>
+                     <div>
+                         <h5 class="fw-bold mb-0 text-dark">{{ mood.get_mood_display }}</h5>
+                         <small class="text-muted d-block mt-1"><i class="far fa-calendar-alt me-1"></i>{{ mood.date|date:"F j, Y, g:i a" }}</small>
+                     </div>
+                 </div>
+                 {% if mood.note %}
+                     <p class="card-text text-muted mb-0"><i class="fas fa-quote-left text-light me-2 fs-5"></i>{{ mood.note }}</p>
+                 {% else %}
+                     <p class="card-text text-muted fst-italic mb-0 small opacity-50">No note provided for this entry.</p>
+                 {% endif %}
+             </div>
+             <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+                  <div class="progress" style="height: 6px;">
+                      {% if mood.mood == 'Happy' %}
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif mood.mood == 'Calm' %}
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif mood.mood == 'Stressed' or mood.mood == 'Sad' %}
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                      {% else %}
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                      {% endif %}
+                  </div>
+             </div>
+         </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+         <div class="bg-light rounded-4 p-5 d-inline-block shadow-sm">
+             <i class="fas fa-folder-open text-muted fs-1 mb-3"></i>
+             <h3 class="fw-bold">No Records Found</h3>
+             <p class="text-muted">You haven't logged any moods yet. Start tracking to see your history here.</p>
+             <a href="{% url 'log_mood' %}" class="btn btn-primary rounded-pill mt-3 px-4"><i class="fas fa-plus me-2"></i>Log First Mood</a>
+         </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-5 py-4">
+    <div class="col-md-8">
+        <h1 class="text-primary fw-bold">Welcome back, {{ user.username }}!</h1>
+        <p class="text-muted">Here's your wellness overview.</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        <a href="{% url 'log_mood' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="fas fa-plus-circle me-2"></i>Log Mood Now
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Mood Chart -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-chart-line text-success me-2"></i>Mood Trends</h5>
+                    <a href="{% url 'export_mood_pdf' %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-file-pdf me-1"></i>Export PDF</a>
+                </div>
+                {% if labels %}
+                    <canvas id="moodChart" width="400" height="200"></canvas>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-chart-bar fs-1 mb-3 text-light"></i>
+                        <p>No mood logs yet. Start logging your mood to see trends!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Smart Suggestions -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-light">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4"><i class="fas fa-lightbulb text-warning me-2"></i>Smart Suggestions</h5>
+                {% if recent_moods %}
+                    <p class="text-muted small">Based on your latest mood: <strong>{{ recent_moods.0.get_mood_display }}</strong></p>
+                    {% if suggestions %}
+                        <ul class="list-unstyled">
+                            {% for suggestion in suggestions %}
+                                <li class="mb-3 d-flex align-items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                    <span>{{ suggestion.text }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                         <p class="text-muted">Take some time for yourself today. Try a short walk or a few deep breaths.</p>
+                         <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-music text-primary me-2"></i> Listen to some calming music 🎵</li>
+                            <li class="mb-3"><i class="fas fa-running text-success me-2"></i> Go for a short 10-minute walk 🏃</li>
+                            <li class="mb-3"><i class="fas fa-om text-warning me-2"></i> Try a 5-minute meditation 🧘</li>
+                         </ul>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted">Log your mood to get personalized wellness suggestions.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Moods -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-smile text-primary me-2"></i>Recent Moods</h5>
+                    <a href="{% url 'mood_history' %}" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                </div>
+                <div class="list-group list-group-flush border-top-0">
+                    {% for mood in recent_moods %}
+                        <div class="list-group-item px-0 py-3 border-bottom d-flex align-items-center">
+                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-size: 20px;">
+                                {% if mood.mood == 'Happy' %}😊
+                                {% elif mood.mood == 'Sad' %}😢
+                                {% elif mood.mood == 'Angry' %}😡
+                                {% elif mood.mood == 'Stressed' %}😰
+                                {% elif mood.mood == 'Calm' %}😌
+                                {% endif %}
+                             </div>
+                             <div>
+                                 <h6 class="mb-0 fw-bold">{{ mood.get_mood_display }}</h6>
+                                 <small class="text-muted">{{ mood.date|date:"g:i A, M j" }}</small>
+                             </div>
+                             {% if mood.note %}
+                                <i class="fas fa-comment-dots text-muted ms-auto" title="{{ mood.note }}"></i>
+                             {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-4 text-muted">No recent moods logged.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Journals -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-book text-info me-2"></i>Recent Journals</h5>
+                    <a href="{% url 'journal_list' %}" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                </div>
+                <div class="list-group list-group-flush border-top-0">
+                    {% for journal in journals %}
+                        <a href="{% url 'journal_detail' journal.pk %}" class="list-group-item list-group-item-action px-0 py-3 border-bottom d-flex align-items-start text-decoration-none">
+                             <i class="fas fa-file-alt text-muted mt-1 me-3 fs-5"></i>
+                             <div>
+                                 <h6 class="mb-1 fw-bold text-dark">{{ journal.title }}</h6>
+                                 <p class="mb-0 text-muted small text-truncate" style="max-width: 200px;">{{ journal.content|truncatechars:30 }}</p>
+                                 <small class="text-muted">{{ journal.date|date:"M j, Y" }}</small>
+                             </div>
+                        </a>
+                    {% empty %}
+                        <div class="text-center py-4 text-muted">No journal entries yet.</div>
+                        <div class="text-center">
+                             <a href="{% url 'journal_create' %}" class="btn btn-sm btn-outline-primary">Write a entry</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if labels %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('moodChart').getContext('2d');
+    var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(74, 144, 226, 0.5)'); // primary color with opacity
+    gradient.addColorStop(1, 'rgba(74, 144, 226, 0.0)');
+
+    var moodChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: 'Mood Level (1-5)',
+                data: {{ data|safe }},
+                backgroundColor: gradient,
+                borderColor: '#4a90e2',
+                borderWidth: 3,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#4a90e2',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: 1,
+                    max: 5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            if (value === 5) return 'Happy';
+                            if (value === 4) return 'Calm';
+                            if (value === 3) return 'Neutral';
+                            if (value === 2) return 'Stressed/Sad';
+                            if (value === 1) return 'Angry';
+                            return '';
+                        }
+                    },
+                    grid: {
+                        borderDash: [5, 5]
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: '#ddd',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            var val = context.parsed.y;
+                            if (val === 5) return 'Mood: Happy 😊';
+                            if (val === 4) return 'Mood: Calm 😌';
+                            if (val === 3) return 'Mood: Neutral 😐';
+                            if (val === 2) return 'Mood: Stressed/Sad 😰';
+                            if (val === 1) return 'Mood: Angry 😡';
+                            return 'Mood: ' + val;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

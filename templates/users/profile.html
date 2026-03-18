@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-5">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px; font-size: 32px;">
+                        {{ user.username|make_list|first|upper }}
+                    </div>
+                    <div>
+                        <h2 class="mb-0">{{ user.username }}</h2>
+                        <p class="text-muted mb-0">{{ user.email }}</p>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset class="form-group mb-4">
+                        <legend class="border-bottom mb-3 pb-2 text-primary"><i class="fas fa-cog me-2"></i>Profile Info</legend>
+                        <div class="mb-3">
+                            {{ u_form.as_p }}
+                        </div>
+                        <div class="mb-3">
+                            {{ p_form.as_p }}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary px-4 rounded-pill" type="submit">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
