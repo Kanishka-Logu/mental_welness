@@ -5,7 +5,7 @@ __pycache__
 .DS_Store
 *.swp
 db.sqlite3
-static/
+staticfiles/
 media/
 env/
 venv/
